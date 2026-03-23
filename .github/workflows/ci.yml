@@ -1,6 +1,9 @@
 name: idempot-pipe
 on:
   pull_request: 
+    paths:
+      - '1-DevOps/idempotweet/**'
+      - '.github/workflows/ci.yml'
   workflow_call:
 jobs: 
   ci:
@@ -14,6 +17,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v6.3.0
         with: 
+          node-version: '20'
           cache: yarn
       - name: Enable Corepack
         working-directory: .
