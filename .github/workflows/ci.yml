@@ -1,0 +1,41 @@
+name: idempot-pipe
+on:
+  pull_request: 
+    paths:
+      - '1-DevOps/idempotweet/**'
+      - '.github/workflows/ci.yml'
+  workflow_call:
+jobs: 
+  ci:
+    defaults: 
+      run:
+        working-directory: 1-DevOps/idempotweet
+    runs-on: ${{ vars.RUNNER || 'self-hosted' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6.3.0
+        with: 
+          node-version: '20'
+      - name: Enable Corepack
+        working-directory: .
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Run tests
+        run: yarn test
+      - name: Test coverage
+        run: yarn test:coverage
+        continue-on-error: true
+      - name: Official SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7.0.0
+        with: 
+          projectBaseDir: 1-DevOps/idempotweet
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        
+      
+        
+        
