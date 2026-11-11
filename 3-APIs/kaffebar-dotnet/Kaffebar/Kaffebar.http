@@ -4,6 +4,78 @@
 GET {{host}}/menu
 Accept: application/json
 
+### Opprett en bestilling (erstatt coffeeId med en ID fra menyen)
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "coffeeId": "c0ffee01-0000-4000-8000-000000000007",
+  "customerName": "Ada",
+  "size": "MEDIUM",
+  "milkType": "OAT",
+  "extraShot": false,
+  "quantity": 1
+}
+
+### Ugyldig forespørsel: obligatoriske ordredata mangler (400 Bad Request)
+POST {{host}}/orders
+Content-Type: application/json
+
+{}
+
+### Hent bestillinger
+GET {{host}}/orders?limit=50&offset=0
+Accept: application/json
+
+### Hent bestillinger som er klare
+GET {{host}}/orders?status=READY
+Accept: application/json
+
+### Hent én bestilling (erstatt orderId med en ID fra POST /orders)
+GET {{host}}/orders/{{orderId}}
+Accept: application/json
+
+### Flytt ordre ett steg frem (gjenta med BREWING, deretter READY)
+PATCH {{host}}/orders/{{orderId}}
+Content-Type: application/json
+
+{
+  "status": "BREWING"
+}
+
+### Vurder ferdig ordre (vurderingen kan sendes på nytt for å endre den)
+POST {{host}}/orders/{{orderId}}/rating
+Content-Type: application/json
+
+{
+  "rating": "SAVED_MY_MORNING"
+}
+
+### Hent vurderingen for en ordre
+GET {{host}}/orders/{{orderId}}/rating
+Accept: application/json
+
+### Hent ukas vurderingsoppsummering for demo-brukeren
+GET {{host}}/users/22222222-2222-2222-2222-222222222222/weekly-summary
+Accept: application/json
+
+### Opprett en bruker (201 Created)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "name": "Ada Lovelace"
+}
+
+### Ugyldig forespørsel: Navn mangler (400 Bad Request)
+POST {{host}}/users
+Content-Type: application/json
+
+{}
+
+### Slett demo-brukeren (204 første gang, 404 etter at brukeren er slettet)
+DELETE {{host}}/users/22222222-2222-2222-2222-222222222222
+
 ### Se den genererte OpenAPI-spesifikasjonen (åpne i browser)
 # {{host}}/openapi/v1.json
 
